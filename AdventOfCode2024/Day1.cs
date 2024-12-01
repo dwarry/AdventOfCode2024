@@ -34,7 +34,7 @@ internal static class Day1
 
         var lookup = list2.ToLookup(x => x);
 
-        var similarityScore = list1.Select(x => lookup[x].Sum()).Sum();
+        var similarityScore = list1.Sum(x => lookup[x].Sum());
 
         Console.WriteLine($"Part 2 = {similarityScore}");
     }
