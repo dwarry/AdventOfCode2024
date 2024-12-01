@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -28,22 +29,10 @@ internal static class Day1
 
         Console.WriteLine($"Part 1: {result}");
 
-        Dictionary<int, int> counts = [];
+        var lookup = list2.ToLookup(x => x);
 
-        foreach(var i in list2)
-        {
-            if(counts.ContainsKey(i))
-            {
-                counts[i] += i;
-            }
-            else
-            {
-                counts[i] = i;
-            }
-        }
-        
-        var similarityScore = list1.Sum(x => counts.GetValueOrDefault(x, 0));
+        var similarityScore = list1.Select(x => x * lookup[x].Count()).Sum();
 
-        Console.WriteLine(similarityScore);
+        Console.WriteLine($"Part 2 = {similarityScore}");
     }
 }
