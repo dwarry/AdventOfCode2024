@@ -25,13 +25,16 @@ internal static class Day1
         list1.Sort();
         list2.Sort();
 
-        var result = list1.Zip(list2).Select(tup => Math.Abs(tup.First - tup.Second)).Sum();
+        var result = list1
+            .Zip(list2)
+            .Select(tup => Math.Abs(tup.First - tup.Second))
+            .Sum();
 
         Console.WriteLine($"Part 1: {result}");
 
         var lookup = list2.ToLookup(x => x);
 
-        var similarityScore = list1.Select(x => x * lookup[x].Count()).Sum();
+        var similarityScore = list1.Select(x => lookup[x].Sum()).Sum();
 
         Console.WriteLine($"Part 2 = {similarityScore}");
     }
