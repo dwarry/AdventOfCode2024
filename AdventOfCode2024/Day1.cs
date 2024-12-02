@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace AdventOfCode2024;
 internal static class Day1
 {
-    public static void Part1(string path)
+    public static void Solve(string path)
     {
         List<int> list1 = [];
         List<int> list2 = [];
