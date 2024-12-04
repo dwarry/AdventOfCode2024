@@ -24,55 +24,80 @@ internal class Day4
 
         var testString = new char[4];
         
-        var xmasCount = 0;
+        int part1 = 0, part2 = 0;
 
         for(int row = 0; row < lines.Length; row++)
         {
             for(int col = 0; col < lines[row].Length; col++)
             {
-                GetTestString(row, col, 0, 1); // horizontal
-                CheckIsXmas();
+                GetTestString(testString, row, col, 0, 1); // horizontal
+                CheckIsXmas(testString);
 
-                GetTestString(row, col, 1, 0); // vertical
-                CheckIsXmas();
+                GetTestString(testString, row, col, 1, 0); // vertical
+                CheckIsXmas(testString);
 
-                GetTestString(row, col, 1, 1); // left-to-right diagonal
-                CheckIsXmas();
+                GetTestString(testString, row, col, 1, 1); // left-to-right diagonal
+                CheckIsXmas(testString);
 
-                GetTestString(row, col, 1, -1); // right-to-left diagonal
-                CheckIsXmas();
+                GetTestString(testString, row, col, 1, -1); // right-to-left diagonal
+                CheckIsXmas(testString);
             }
         }
 
-        Console.WriteLine($"Part 1: {xmasCount}");
+        Console.WriteLine($"Part 1: {part1}");
 
-        void CheckIsXmas()
+        char[] diag1 = new char[3];
+        char[] diag2 = new char[3];
+
+        for(int row = 0; row < lines.Length; row++)
         {
-            if( testString.Zip("XMAS").All(tup => tup.First == tup.Second)
-                || testString.Zip("SAMX").All(tup => tup.First == tup.Second))
+            for(int col = 0; col < lines[row].Length; col++)
             {
-                xmasCount++;
+                
+                GetTestString(diag1, row, col, 1, 1); // left-to-right diagonal
+                GetTestString(diag2, row, col + 2, 1, -1); // right-to-left diagonal
+
+                if(CheckIsMAS(diag1) && CheckIsMAS(diag2))
+                {
+                    part2++;
+                }
             }
         }
 
-        
+        Console.WriteLine($"Part 2: {part2}");
 
-        void GetTestString(int startRow, int startCol, int deltaRow, int deltaCol)
+
+        void CheckIsXmas(IEnumerable<char> test)
+        {
+            if("XMAS".Zip(test).All(tup => tup.First == tup.Second)
+                || "SAMX".Zip(test).All(tup => tup.First == tup.Second))
+            {
+                part1++;
+            }
+        }
+
+        bool CheckIsMAS(IEnumerable<char> test)
+        {
+            return "MAS".Zip(test).All(tup => tup.First == tup.Second)
+                || "SAM".Zip(test).All(tup => tup.First == tup.Second);
+        }
+
+        void GetTestString(char[] result, int startRow, int startCol, int deltaRow, int deltaCol)
         {
             int row = startRow, col = startCol;
 
-            for(int i = 0; i < 4; i++)
+            for(int i = 0; i < result.Length; i++)
             {
                 if(row >= 0 &&
                    row < lines.Length &&
                    col >= 0 &&
                    col < lines[i].Length)
                 {
-                    testString[i] = lines[row][col];
+                    result[i] = lines[row][col];
                 }
                 else
                 {
-                    testString[i] = ' ';
+                    result[i] = ' ';
                 }
                 row += deltaRow;
                 col += deltaCol;
