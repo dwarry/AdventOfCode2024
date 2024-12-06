@@ -10,6 +10,7 @@ internal static class Day5
 {
     public static void Solve(string path)
     {
+
         var lines = File.ReadAllLines(path);
 
         var breakPosition = Array.FindIndex(lines, x => x?.Length == 0);
