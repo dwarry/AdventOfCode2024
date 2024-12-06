@@ -9,17 +9,6 @@ internal class Day4
 {
     public static void Solve(string path)
     {
-//        string[] lines = @"MMMSXXMASM
-//MSAMXMSMSA
-//AMXSXMAAMM
-//MSAMASMSMX
-//XMASAMXAMM
-//XXAMMXXAMA
-//SMSMSASXSS
-//SAXAMASAAA
-//MAMMMXMMMM
-//MXMXAXMASX".Split("\r\n");
-        
         string[] lines = File.ReadAllLines(path);
 
         var testString = new char[4];
@@ -88,10 +77,8 @@ internal class Day4
 
             for(int i = 0; i < result.Length; i++)
             {
-                if(row >= 0 &&
-                   row < lines.Length &&
-                   col >= 0 &&
-                   col < lines[i].Length)
+                if(row >= 0 && row < lines.Length 
+                   && col >= 0 && col < lines[i].Length)
                 {
                     result[i] = lines[row][col];
                 }
