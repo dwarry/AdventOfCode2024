@@ -7,6 +7,24 @@ using System.Threading.Tasks;
 namespace AdventOfCode2024;
 internal static class Day6
 {
+    private record Coord(int row, int col);
+
+    private record Direction(int deltaRow, int deltaCol, char guard)
+    {
+        public static readonly Direction Default = new(0, 0, ' ');
+
+        public char GetTrailChar(char ch)
+        {
+            return ch switch
+            {
+                '.' or '^' or '>' or 'v' or '<' => deltaRow != 0 ? '|' : '-',
+                '|' => deltaRow != 0 ? '|' : '+',
+                '-' => deltaRow != 0 ? '+' : '-',
+                _ => throw new InvalidOperationException($"Unknown position character: '{ch}'")
+            };
+        }
+    }
+
     public static void Solve(string path)
     {
 //        var lines = @"....#.....
@@ -23,13 +41,13 @@ internal static class Day6
 
         var area = lines.Select(x => new StringBuilder(x)).ToArray();
 
-        var moveUp = (-1, 0, '^');
-        var moveDown = (1, 0, 'v');
-        var moveLeft = (0, -1, '<');
-        var moveRight = (0, 1, '>');
+        var moveUp = new Direction(-1, 0, '^');
+        var moveDown = new Direction(1, 0, 'v');
+        var moveLeft = new Direction(0, -1, '<');
+        var moveRight = new Direction(0, 1, '>');
 
         (int, int) guardPosition = (0, 0);
-        (int, int, char) currentDirection = (0, 0, ' ');
+        var currentDirection = Direction.Default;
 
         var movementCycle = MovementDirections().GetEnumerator();
 
@@ -67,7 +85,7 @@ internal static class Day6
             }
         }
 
-        if(currentDirection == (0, 0, ' '))
+        if(currentDirection == Direction.Default)
         {
             Console.Error.WriteLine("No Guard!");
             return;
@@ -89,7 +107,7 @@ internal static class Day6
                 int result = 0;
                 for(int i = 0; i < x.Length; i++)
                 {
-                    if(x[i] == 'X')
+                    if(x[i] is '|' or '-' or '+')
                     {
                         result++;
                     }
@@ -100,10 +118,8 @@ internal static class Day6
 
         bool Step()
         {
-            area[guardPosition.Item1][guardPosition.Item2] = 'X';
-            var newGuardPosition = (guardPosition.Item1 + currentDirection.Item1, guardPosition.Item2 + currentDirection.Item2);
-
-
+            area[guardPosition.Item1][guardPosition.Item2] = currentDirection.GetTrailChar(area[guardPosition.Item1][guardPosition.Item2]);
+            var newGuardPosition = (guardPosition.Item1 + currentDirection.deltaRow, guardPosition.Item2 + currentDirection.deltaCol);
 
             if(newGuardPosition.Item1 < 0 || newGuardPosition.Item1 >= lines.Length
                 || newGuardPosition.Item2 < 0 || newGuardPosition.Item2 >= lines[0].Length)
@@ -116,12 +132,12 @@ internal static class Day6
                 {
                     movementCycle.MoveNext();
                     currentDirection = movementCycle.Current;
-                    area[guardPosition.Item1][guardPosition.Item2] = currentDirection.Item3;
+                    //area[guardPosition.Item1][guardPosition.Item2] = currentDirection.guard;
                 }
                 else
                 {
                     guardPosition = newGuardPosition;
-                    area[guardPosition.Item1][guardPosition.Item2] = currentDirection.Item3;
+                    //area[guardPosition.Item1][guardPosition.Item2] = currentDirection.guard;
                 }
 
                 return false;
@@ -129,7 +145,7 @@ internal static class Day6
         }
 
 
-        IEnumerable<(int, int, char)> MovementDirections()
+        IEnumerable<Direction> MovementDirections()
         {
             while(true)
             {
